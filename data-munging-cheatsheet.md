@@ -1,5 +1,7 @@
 # Data Munging CheatSheet
 
+Manipulating and visualize data with matplotlib, pandas in python
+
 ## Definition
 - **Series** is a one dim array
 - **Dataframe** is a two dimension array
