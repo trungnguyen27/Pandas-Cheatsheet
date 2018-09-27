@@ -1,7 +1,5 @@
 # Data Munging CheatSheet
 
-Manipulating and visualize data with matplotlib, pandas in python
-
 ## Definition
 - **Series** is a one dim array
 - **Dataframe** is a two dimension array
@@ -35,9 +33,9 @@ DF_obj.ix[['row 2', 'row 5'], ['column 5', 'column 2']]
 ```
 
 ```py
-    cars_df = pd.DataFrame((cars.ix[:,(1,3,4,6)].values), columns = ['mpg', 'disp', 'hp', 'wt']) # create a new dataframe with manual data picking
+cars_df = pd.DataFrame((cars.ix[:,(1,3,4,6)].values), columns = ['mpg', 'disp', 'hp', 'wt']) # create a new dataframe with manual data picking
     
-    cars_target = cars.ix[:,9].values
+cars_target = cars.ix[:,9].values
 ```
 
 ### Data slicing, receive all the records of row/column
@@ -521,7 +519,7 @@ import seaborn as sb
     sb.pairplot(cars_df, hue='group', palette='hls')
     ```
 
-4. Building Box plot
+4. [Building Box plot](http://www.physics.csbsju.edu/stats/box2.html)
 
     ```py
     cars.boxplot(column='mpg', by='am')
@@ -533,3 +531,139 @@ import seaborn as sb
         ```py
         sb.boxplot(x='am', y='mpg', data=cars, palette='hls')
         ```
+
+
+# Working with Numpy and Scipy
+
+```py
+import numpy as np
+import pandas as pd
+from pandas import Series, DataFrame
+
+import scipy
+from scipy import stats
+```
+
+## Math and Statistics
+
+```python
+cars.sum() # summarize each column
+
+cars.sum(axis=1) #sumarize each row
+
+cars.median() # get the mid value
+
+cars.mean() # get the average
+
+cars.max() 
+
+mpg = cars.mpg
+mpg.idxmax()
+
+cars.std() # standard deviation
+
+cars.var() # Variance
+
+gear = cars.gear
+
+gear.value_counts()
+
+cars.describe()
+
+# Describe with grouping
+gears_group = cars_cat.groupby('gear')
+gears_group.describe()
+```
+
+### Transforming variables to categorical data type
+
+```py
+# pd.Series(x_variable, dtype)
+# ♔┈♔┈♔┈( WHAT THIS DOES )┈♔┈♔┈♔
+# To create a Series of categorical data type, call the pd.Series() function on the array or Series that holds the data you
+# want the new Series object to contain. When you pass in the dtype="category" argument, this tells Python to assign the new
+# Series a data type of "category". Here we create a new categorical Series from the gear variable, and then assign it to a
+# new column in the cars DataFrame, called 'group'.
+cars['group'] = pd.Series(cars.gear, dtype="category")
+cars['group'].dtypes
+cars['group'].value_counts()
+```
+
+### Describing categorical data with crosstabs
+
+```py
+# pd.crosstab(y_variable, x_variable)
+# ♔┈♔┈♔┈( WHAT THIS DOES )┈♔┈♔┈♔
+# To create a cross-tab, just call the pd.crosstab() function on the variables you want included in 
+# the output table.
+pd.crosstab(cars['am'], cars['gear'])
+```
+
+## Correlation between variables
+
+import
+
+```py
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+import seaborn as sb
+from pylab import rcParams
+
+import scipy
+from scipy.stats.stats import pearsonr
+
+```
+
+### Parametric methods in Pandas and Scipy
+
+#### The pearson correlation
+
+> **Pearson Correlation Coefficient**
+> - R = 1 -> Strong positive Relationship
+> - R = 0 -> not linearly correlated
+> - R = -1 -> Strong negative relationship
+
+> **Assumptions**
+> - Data is normally distributed
+> - continuous, numeric variables
+> - Variables are linearly related
+
+```py
+sb.pairplot(cars)
+
+X = cars[['mpg', 'hp', 'qsec','wt']]
+sb.pairplot(X)
+```
+#### Using scipy to calculate the Pearson correlation coefficient
+
+```py
+mpg = cars['mpg']
+hp = cars['hp']
+qsec = cars['qsec']
+wt = cars['wt']
+
+pearsonr_coefficient, p_value = pearsonr(mpg, hp)
+print 'PearsonR Correlation Coefficient %0.3f' % (pearsonr_coefficient)
+
+pearsonr_coefficient, p_value = pearsonr(mpg, qsec)
+print 'PearsonR Correlation Coefficient %0.3f' % (pearsonr_coefficient)
+
+
+pearsonr_coefficient, p_value = pearsonr(mpg, wt)
+print 'PearsonR Correlation Coefficient %0.3f' % (pearsonr_coefficient)
+```
+
+#### Using pandas to calcuate Pearson correlation coefficient
+
+```py
+corr = X.corr()
+corr
+```
+
+#### Using Seaborn to visualize the Pearson correlation coefficient
+
+```py
+sb.heatmap(corr,xticklabels=corr.columns.values, yticklabels=corr.columns.values)
+```
