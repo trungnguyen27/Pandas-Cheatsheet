@@ -630,6 +630,10 @@ from scipy.stats.stats import pearsonr
 > - continuous, numeric variables
 > - Variables are linearly related
 
+> **Usage**
+> - Uncover (linear) rela
+> - Not to rule out possible (non-linear) relationships between variables
+
 ```py
 sb.pairplot(cars)
 
@@ -667,3 +671,143 @@ corr
 ```py
 sb.heatmap(corr,xticklabels=corr.columns.values, yticklabels=corr.columns.values)
 ```
+
+## Non-parametric Methods for Correlation
+
+> - **Spearman's rank correlation**: Finds the R correlation between variable-pairs of ordinal data types. Variable-pair are then able to be ranked according to the strength of the correlation between them.
+> -**Chi-square table**s (pronounce 'kai')
+ 
+### Spearman's rank correlation
+
+> - R = 1 -> Strong positive Relationship
+> - R = 0 -> not linearly correlated
+> - R = -1 -> Strong negative relationship
+
+> **Assumption**
+> - Variables are ordinal (numeric,but able to be ranked like a categorical var)
+> - related non-linearly
+> - non-normally distributed
+
+#### Implementation with scipy
+
+**Imports**
+
+```py
+import numpy as np
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import seaborn as sb
+from pylab import rcParams
+
+import scipy
+from scipy.stats import spearmanr
+```
+
+```py
+cyl = cars['cyl']
+vs = cars['vs']
+am = cars['am']
+gear = cars['gear']
+spearmanr_coefficient, p_value = spearmanr(cyl, vs)
+print 'Spearman Rank Correlation Coefficient %0.3f' % (spearmanr_coefficient)
+
+
+spearmanr_coefficient, p_value = spearmanr(cyl, am)
+print 'Spearman Rank Correlation Coefficient %0.3f' % (spearmanr_coefficient)
+
+
+spearmanr_coefficient, p_value = spearmanr(cyl, gear)
+print 'Spearman Rank Correlation Coefficient %0.3f' % (spearmanr_coefficient)
+```
+
+### Chi-square table
+
+> - p < 0.05 -> Reject null hypothesis and conclude that the var are correlated
+> - p > 0.05 -> Accept null hypothesis and conclude that the var are independent
+> - R = -1 -> Strong negative relationship
+
+**When to use**
+> Categorical or numeric
+> You have binned the numeric vars
+
+#### Implementation 
+
+**Imports**
+
+```py
+table = pd.crosstab(cyl, am)
+
+from scipy.stats import chi2_contingency
+chi2, p, dof, expected = chi2_contingency(table.values)
+print 'Chi-square Statistic %0.3f p_value %0.3f' % (chi2, p)
+```
+
+```py
+table = pd.crosstab(cars['cyl'], cars['vs'])
+chi2, a, dof, expected = chi2_contingency(table.values)
+print 'Chi-square Statistic %0.3f p_value %0.3f' % (chi2, p)
+```
+
+```py
+table = pd.crosstab(cars['cyl'], cars['gear'])
+chi2, p, dof, expected = chi2_contingency(table.values)
+print 'Chi-square Statistic %0.3f p_value %0.3f' % (chi2, p)
+```
+
+## Data Scaling
+
+**Why?**
+- Prevent differing magnitube among variables from producing erroneous/misleading statistics
+- Prepare data for machine learning
+
+**Two way to scale data**
+- Normalization: put observation on a relative scale between values of 0 and 1
+- Standardization: Rescaling data so it has a zero mean and unit variance
+
+**Scikit-learn preprocessing**
+- Scale data
+- Center data
+- Normalize data
+- Bin data
+- Impute data
+
+**Imports**
+
+```py
+import numpy as np
+import pandas as pd
+import scipy
+
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+import seaborn as sb
+
+import sklearn
+from sklearn import preprocessing
+from sklearn.preprocessing import scale
+```
+
+ **Implementations**
+
+```py 
+# Normalization
+mpg_matrix = mpg.reshape(-1,1)
+scaled = preprocessing.MinMaxScaler()
+scaled_mpg = scaled.fit_transform(mpg_matrix)
+plt.plot(scaled_mpg)
+
+mpg_matrix = mpg.reshape(-1,1)
+scaled = preprocessing.MinMaxScaler(feature_range=(0,10)) # custom range
+scaled_mpg = scaled.fit_transform(mpg_matrix)
+plt.plot(scaled_mpg)
+
+# Standardization
+standardized_mpg = scale(mpg, axis=0, with_mean=False, with_std=False) # this will result in the  same original values
+plt.plot(standardized_mpg)
+
+# Scale
+standardized_mpg = scale(mpg)
+plt.plot(standardized_mpg)
+```
+
