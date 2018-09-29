@@ -304,7 +304,152 @@ print classification_report(y, relabel)
 
 
 ### Hierachical Clustering
+
 Hierachical clustering predict subgroups within data by
 - finding distance between each data point and its nearest neighbors
 - linking the most nearby neighbors
+- 
 
+**Use case**
+- Hospital resource manangement
+- Business process management
+- Customer segmentation
+- Social network analysis
+  
+**Hierachical Clustering parameters**
+Distance Metrics
+- Euclidian
+- Manhattan
+- Cosine
+
+Linkage Parameters
+- Ward
+- Complete
+- Average
+
+_what to choose?_: Trial and error
+
+**Imports**
+
+```py
+import scipy
+from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.cluster.hierarchy import fcluster
+from scipy.cluster.hierarchy import cophenet
+from scipy.spatial.distance import pdist
+
+import matplotlib.pyplot as plt
+from pylab import rcParams
+import seaborn as sb
+
+import sklearn
+from sklearn.cluster import AgglomerativeClustering #Same as hierachical clustering
+import sklearn.metrics as sm
+```
+
+#### implementation
+
+**Using scipy to generate dendrogram**
+```py
+Z = linkage(X, "ward")
+dendrogram(Z, truncate_mode = "lastp", p = 12, leaf_rotation = 45, leaf_front_size=15., show_contracted = True)
+
+
+plt.title('Truncated Hierarchical Clustering Dendrogram')
+plt.xlabel('Cluster Size')
+plt.ylabel('Distance')
+
+plt.axhline(y=500)
+plt.axhline(y=150)
+plt.show()
+```
+
+From what we've know about the data, we can make useful decision about the dataset using the dendrogram. Like how many clusters it should be
+
+**Generating hierarchical clusters**
+
+Since we are considering cars data set, which has 2 possible transmission: auto and manual. so we will set number of cluster to 2 and fit the data
+
+```py
+k = 2 # presumed 2 clusters
+
+
+Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='ward')
+Hclustering.fit(X)
+
+sm.accuracy_score(y, Hclustering.labels_)
+
+Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='complete')
+Hclustering.fit(X)
+
+sm.accuracy_score(y, Hclustering.labels_)
+
+Hclustering = AgglomerativeClustering(n_clusters=k, affinity='euclidean', linkage='average')
+Hclustering.fit(X)
+
+sm.accuracy_score(y, Hclustering.labels_)
+
+Hclustering = AgglomerativeClustering(n_clusters=k, affinity='manhattan', linkage='average')
+Hclustering.fit(X)
+
+sm.accuracy_score(y, Hclustering.labels_)
+```
+
+
+
+### Instanced-based learning K-Nearest neighbor classification
+
+K-NN is a supervised classfier that memorizes observations from within a labeled test set to predict classfication labels for new, unlabeled observations
+
+**Use cases**
+- Stock price prediction
+- Recommendation systems
+- Credit risk anaylsis
+
+**Assumptions**
+- Data set has little noise
+- Is Labeled
+- Only contains relevant features
+- has distinguishable subgroups
+- **Avoid using K-NN on large dataset. It will takes a long time**
+
+**Imports**
+
+```py
+
+import matplotlib.pyplot as plt
+from pylab import rcParams
+
+import urllib
+
+import sklearn
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import neighbors
+from sklearn import preprocessing
+from sklearn.cross_validation import train_test_split
+from sklearn import metrics
+```
+ 
+ **Implementation**
+
+```py
+X = preprocessing.scale(X_prime)
+ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.33, random_state=17)
+
+ # Building and training your model with training data
+ clf = neighbors.KNeighborsClassifier()
+
+clf.fit(X_train, y_train)
+print(clf)
+
+# Evaluation model's prediction against test dataset
+y_expect = y_test
+y_pred = clf.predict(X_test)
+
+print(metrics.classification_report(y_expect, y_pred))
+```
+
+**Evaluation**
+- Recall is a measure of your model's completeness
+- High precision + low recall = Few results was returned (predicted), but many of the labels predictions returned were correct.
+- 
