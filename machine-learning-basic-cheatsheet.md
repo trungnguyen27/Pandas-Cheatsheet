@@ -478,7 +478,7 @@ print(metrics.classification_report(y_expect, y_pred))
 - Graph Search algorithm
 - SubGraph Algorithm
 
- ## Implementation
+ ### Implementation
 
  **Imports**
 ```
@@ -560,4 +560,125 @@ DG.degree()
 
 # Identify successor nodes
 DG.successor(3)
+
+# Identify neighbors
+G.neighbors(4)
+```
+
+## Linear Regression
+
+> Statistical machine learning method, used to quantify, make predictions based on relationships between numberical variables
+
+- **Simple Linear regression**: one predictor and one predictant
+- **Multiple linear regression**: multiple predictors and one predictant
+
+**Use cases**
+- Sales forecasting
+- Resource consumption forcasting
+- supply cost forcasting
+- Telecom services lifecycle forecasting
+
+**Assumption**
+- Continuous numberic, not categorial
+- Data is free of missing values and outliers
+- Linear relationship between predictors and predictant
+- All predictors are indenpendent of each other
+- Residuals are normally distributed
+
+### Implementation
+
+**imports**
+
+```py
+import sklearn
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import scale
+from collections import Counter
+
+enroll = pd.read_csv(enroll_csv_address)
+enroll.columns = ['year', 'roll', 'unem', 'hgrad', 'inc']
+
+# first try to pairplot to find anomalies and correlation
+
+sb.pairplot(enroll)
+
+# then print correlation metrics using 
+enroll.corr()
+
+# isolate data
+enroll_data = enroll.ix[:,(2,3)].values # unem, hgrad
+enroll_target = enroll.ix[:, 1].values
+
+# Scale the data
+X,y  = scale(enroll, data), enroll_target
+
+# check for missing values
+missing_values = X == np.NAN
+X[missing_values == True]
+
+LinReg = LinearRegression(normalize = True)
+
+LinReg.fit(X,y )
+Linear.score()
+```
+
+## Logistic Regression
+
+> a simple machine learning method, used to predic the value of a numeric categorial var based on its relationship with predictor variables
+
+**Use case**
+- Purchase propensity vs ad spend analysis
+- customer Churn prediction
+- employee attrition modelling
+- Hazardous event prediction
+
+**Assumption**
+- free of missing values
+- predictant var is binary or ordinal (categorical var with ordered values)
+- Predictor are independent of each other
+- at least 50 observation per predictor variables (to ensure a reliable results)
+
+### Implementation
+
+**immports**
+```py
+import sklearn
+from sklearn.preprocessing import scale 
+from sklearn.linear_model import LogisticRegression
+from sklearn.cross_validation import train_test_split
+from sklearn import metrics
+from sklearn import preprocessing
+```
+
+```py
+# Checking for independence between features
+sb.regplot(x = 'draft', y = 'carb', data = cars, scatter=True)
+
+drat = cars['drat']
+carb = cars['carb']
+
+# check for correlation between to value to prove independence
+spearman_coefficient, p_value = spearmanr(drat, carb)
+
+
+# Check for missing values
+cars.isnull().sum()
+
+# check if the target is binary or ordinal
+sb.countplot(x='am', data=cars, palatte = 'plts')
+
+# Check if the size of the dataset is sufficient
+cars.info()
+
+# Deploy and evaluating the model
+X = scale(cars_data)
+LogReg = LogisticRegression()
+LogReg.fit(X, y)
+
+print LogReg.score(X,y)
+
+# Evluate metrics
+y_pred = LogReg.predict(X)
+from sklearn.metrics import classification_report
+print(classification_report(y, y_pred))
 ```
