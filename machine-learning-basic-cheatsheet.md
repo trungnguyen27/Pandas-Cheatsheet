@@ -452,4 +452,112 @@ print(metrics.classification_report(y_expect, y_pred))
 **Evaluation**
 - Recall is a measure of your model's completeness
 - High precision + low recall = Few results was returned (predicted), but many of the labels predictions returned were correct.
-- 
+
+## Network Analysis
+
+**Use cases**
+- Social media marketing strategy
+- Infrastructure system design
+- Financial risk management
+- Public health management
+
+**Terms/Vocabulary**
+- _Network_: a body of connected data that's evaluated during graph analysis
+- _Graph_: A data visualization schematic depicting the data the comprises a network
+- _nodes_: vertices around which a graph is formed
+- _Edges_: the lines that connected the vertices within a graph structure
+- _Directed Graph_(digraph): a graph where there is a direction assigned to each edge that connects a node
+- _Graph size_: number of edges in a graph
+- _Graph order_: the number of vertices in a graph
+- _Degree_: the number of edges connected to a vertex, with loops counted twice (To measure the connectedness)
+ 
+**Graph generators**
+- Graph drawing algorithms
+- Network analysis algorithms
+- Algorithmic routing for graphs
+- Graph Search algorithm
+- SubGraph Algorithm
+
+ ## Implementation
+
+ **Imports**
+```
+ pip3 install networkx
+```
+
+```py
+import networkx as nx
+```
+
+### Usage
+
+**Simple**
+
+```py
+G = nx.graph()
+nx.add_nodes_from([1,2,3,4,5,6,7,8,9,10,12])
+
+nx.add_edges_from([(2,3), (2,4), (2,5)])
+
+nx.draw(G)
+```
+
+**More complex**
+
+```py
+nx.draw_circular(G, node_color='bisque', with_labels=True)
+```
+
+**Identify graph properties**
+
+```py
+sum_stats = nx.info(G)
+print sum_stats
+
+# dictionary of degree 
+print nx.degree(G)
+```
+
+**Using graph generator**
+
+```py
+G = nx.complete_graph(25) #25 nodes
+
+G = nx.gnc_graph(7, seed=25) # 7 nodes, seed = random generator
+
+ego_G  = nx.ego_graph(G, 3, radius = 5) # 3 nodes
+```
+
+### Simulate a social network
+
+**Create graph object and edgelist**
+```py
+DG = nx.gn_graph(7, seed = 25)
+
+for line in nx.generate_edgelist(DG, data = false) : print(line)
+```
+
+**Assign attributes**
+
+```py
+print DG.node[0]
+DG.node[0]['name'] = 'Alice'
+
+# Create a label dict
+labeldict = {0: 'Alice', 1: 'Bob', ...}
+
+```
+
+### Social Network Analysis Metrics
+
+- _Degree_: the connectedness
+- _Successors_: nodes that could serve as backup and potentially replace an influential node in a network. The function of a sucessor node is to preserve the flow of influence throughout a network in the case where an important node is removed.
+- _Neighbors_: adjacent nodes in a network
+
+```py
+# find the degree
+DG.degree()
+
+# Identify successor nodes
+DG.successor(3)
+```
