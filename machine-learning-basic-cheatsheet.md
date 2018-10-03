@@ -682,3 +682,269 @@ y_pred = LogReg.predict(X)
 from sklearn.metrics import classification_report
 print(classification_report(y, y_pred))
 ```
+## Naive Bayes
+
+**Types of Naive Bayes**
+- Multinomial: good for when your features (categorical or continuous) describe discrete frequency counts(e.g word counts)
+- Bernoulli: good for making predictions from binary features
+- Gaussian: good formaking predictions from normally distributed features
+
+
+**Assumption**
+- Predictors are independent of each other
+- A priori assumption: this is an assumption that the past conditions still hold true. when we make predictions from historical values, we will get incorrect results if present circumstances have changed.
+- All regression models maintain a priori assumption as well
+
+**Use cases**
+- Spam detection
+- Customer classificiation
+- Credit risk prediction
+- Health risk prediction
+
+### Implementation
+
+**Imports**
+```py
+import sklearn
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.cross_validation import train_test_split
+from sklearn import metrics
+from sklearn.metrics import accuracy
+```
+
+**Use NB to predict spam**
+```py
+url = '' #mail data
+raw_data = urllib.urlopen(url)
+np.loadtxt(raw_data, delimiter =',')
+
+X = dataset[:, 0:48]
+y = dataset [:, -1] # get the last columns
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = .33, random_state = 17) 
+
+# Bernoulli
+BernNB = BernoulliNB(binarize = True)
+BernNB.fit(X_train, y_train)
+print(BernNB)
+
+y_exprect = y_test
+y_pred = BernNB.predict(X_test)
+print accuracy_score(y_expect, y_pred)
+
+# Multinomial
+MutliNB = MultinomialNB()
+MutliNB.fit(X_train, y_train)
+print(MultiNB)
+
+y_pred = MultiNB.predict(X_test)
+print accuracy_score(y_expect, y_pred)
+
+# Gaussian
+
+GausNB = GaussianNB()
+GausNB.fit(X_train, y_train)
+print(GausNB)
+
+y_pred = GausNB.predict(X_test)
+print accuracy_score(y_expect, y_pred)
+
+# Improve
+# why 0.1 ? 
+BernNB = BernoulliNB(binarize=0.1)
+BernNB.fit(X_train, y_train)
+print(BernNB)
+
+y_exprect = y_test
+y_pred = BernNB.predict(X_test)
+print accuracy_score(y_expect, y_pred)
+
+```
+
+## Create Charts
+
+**Plotly**
+To create Plotly plots from NumPy objects, using the following attributes
+- **Traces**: These are objects that describe a single variable of data in a graph, for example, a scatterplot or heatmap
+- **Layouts**: You use these attributes to set layout elements for your plot, for example, the title, x-axis, or annotations.
+  
+**Install PlotLy**
+```py
+pip install Plotly
+pip install cufflinks 
+```
+
+**imports**
+```py
+import cufflinks as cf
+import plotly.plotly as py
+import plotly.tools as tls
+import plotly.graph_objs as go
+
+tls.set_credentials_file[username=, api_key=]
+
+```
+
+### Creating line charts
+
+**simple Line chart**
+```py
+a = np.linspace(start=0, stop=36, num=36)
+
+np.random.seed(25)
+b = np.random.uniform(low=.0, high=1.0, size=36)
+
+trace = go.scatter(x=a, y=b)
+data = [trace]
+
+py.iplot(data, filename='basic-line-chart')
+```
+
+**A line chart with more than one variable plotted**
+```py
+x = [1,2,3,4,5,6,7,8]
+y= [1,2,654,645,3]
+z = [1,56,7,3,4,5]
+
+trace0 = go.scatter(x=x, y=y, name='List Object', line = dict(width=5))
+trace1 = go.scatter(x=x, y=z, name ='List Object', line = dict(width = 10))
+
+data = [trace0, trace1]
+
+layout  = dict(title = "Double Line Chart", xaxis=dict(title='x-axis'), yaxis=dict(title='y-axis'))
+
+fig = dict(data=data, layout=layout)
+print fig
+
+py.iplot(fig, filename='styled-line-chart')
+```
+
+**Line chart from PandasDataframe**
+
+```py
+address = ''
+cars = pd.read_csv(address)
+cars.column = ['']
+df = cars[['cyl', 'wt', 'mpg']]
+
+layout = dict(title = 'Chart From Pandas DataFrame', xaxis=dict(title='x-axis'), yaxis = dict(title='y-title'))
+
+df.iplot(filename='cf-simple-line-chart', layout=layout)
+```
+
+**Bar Charts**
+
+```py
+data = [go.Bar(x=[1,2,3,4,5,6,7], y = [1,2,3,5,6,7,8])]
+
+layout = dict(title='Bar Chart',
+                xaxis=dict(title='x-axis'), yaxis=dict(title='y-axis'))
+py.iplot(data, filename='basic-bar-chart')
+```
+
+**Color theme**
+```py
+color_theme = dict(color = ['rgba(169,169,169,1)','',])
+trace0 = go.Bar(x=[1,2,3,4,5,6], y=[1,2,4,5,6,4,7], marker = color_theme)
+data = [trace0]
+layout = go.Layout(title='Custom Colors')
+fig = go.Figure(data= data, layout=layout)
+py.iplot(fig, filename='color-bar-chart')
+```
+
+**Pie Charts**
+```py
+fig = {'data':[{'labels': ['bicycles', 'motorbike'],
+                'values': [1,2], 'type':'pie'}],
+        'layout': {'title': 'Simple Pie Chart'}}
+
+py.iplot(fig)
+```
+
+## Statisitical Plots
+
+**Stat Plots in Plotly**
+- Histograms
+- Boxplots
+- Scatterplots
+
+**Plotting Histograms from Pandas**
+- Simple Hist chart: plot a seris object
+- Multiple His chart: plot a dataframe (with overlapping, transparent, interactive hist)
+- Subplot histograms: plot a dataframe in separate, clear, interactive subplots.
+
+**Generating Scatterplots**
+- the `mode` parameter should always be `markers`
+- By _Default_, Plotly will draw lines between data points. So, if you want the points with no lines, you need to designate the plot mode as makers.
+
+### Implementation
+
+**Imports**
+```py
+import plotly.plotly as py
+import plotly.tools as tls
+import plotly.graph_objs as go
+import sklearn
+from sklearn.preprocessing import StandardScaler
+
+//Set credential
+tls.set_credentials_file(username=, api_key)
+```
+
+**Create Histograms**
+
+```py
+address =''
+cars = pd.read_csv()
+cars.column=['']
+mpg = cars.mpg
+
+mpg.iplot(kind='histogram', file_name = 'simple-history-chart')
+
+cars_data = cars.ix[:, (1,3,4)].values
+cars_data_std = StandardScaler().fit_transform(cars_data)
+cars_select = pd.DataFrame(cars_data_std)
+cars_select.columns= ['mpg', 'disp', 'hp']
+
+cars_select.iplot(kind='histogram', filename='multiple-histogram-chart')
+
+# Making subplots
+cars_select.iplot(kind='histogram', filename='subplots-histogram-chart', subplots=True, shape=(3,1)) # 3 rows, 1 columns
+```
+
+**Create box plots**
+```py
+cars_select.iplot(kind ='box', filename='boxplots')
+```
+
+**Create a scatter plots**
+```py
+fig = {'data': [{'x': cars_select.mpg, 'y': cars_select.disp, 'mode':'markers', 'name':'mpg'},
+                {'x': cars_select.hp, 'y': cars_select.disp, 'mode':'markers', 'name':'hp'}], 'layout':{'xaxis':{'title':''}, 'yaxis':{'title':'Standardized Displacement'}}}
+```
+
+### Plotly Maps
+
+Plotting data on a map
+
+**generating Choropleth**
+
+```py
+states['text'] = 'SATv'+ states['satv'].astype(str) + 'SATs' + states['states'].astype(str) + '<br>'+\
+'State ' states['code']
+data = [dict(type='choropleth', autocolorscale=False, locations=states['code'], z=states['dollars'], locationmode='USA-states', text=states['text'], colorscale='custom-colorscale', colorbar = dict(title='thousand dollars'))]
+
+layout = dict(title='State Spending on Public Education, in $k/student', geo = dict(scope='usa', projection=dict(type='albers usa', showlakes = True, lakecolor='rbg(66,165,245)',),))
+
+fig = dict(data=data, layout=layout)
+
+py.iplot(fig, filename='d3-choroplot-map')
+```
+
+**Point maps**
+
+```py
+
+```
